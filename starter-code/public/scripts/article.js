@@ -39,18 +39,31 @@ Article.fetchAll = function(callback) {
   $.get('/articles/all')
   .then(
     function(results) {
-      if (results.rows.length) { // If records exist in the DB
-        // TODO: Call loadAll, and pass in the results, then invoke the callback.
+      if (results.rows.length) {
+        Article.loadAll(results.rows);
+        callback();// If records exist in the DB
+        // did: Call loadAll, and pass in the results, then invoke the callback.
       } else { // if NO records exist in the DB
-        // TODO: Make an ajax call to get the json
+        $.ajax({
+          url: '/data/hackerIpsum.json',
+          method: 'GET',
+          success:function(item){
+            data.forEach(item)
+            var article = new Article(item);
+            insertRecord(item);
+          })
+            .then(
+              fetchAll(callback)
+            .catch(function(err) {
+              console.log(err);
+            });
+        }
+      }
+    )// did: Make an ajax call to get the json
         // THEN() iterate over the results, and create a new Article object for each.
           // When that's complete call the insertRecord method for each article you've created.
         // THEN() invoke fetchAll and pass your callback as an argument
         // Don't forget to CATCH() any errors
-      }
-    }
-  )
-};
 
 
 // REVIEW: Lets take a few minutes and review what each of these new methods do in relation to our server and DB
@@ -87,8 +100,8 @@ Article.prototype.deleteRecord = function(callback) {
 
 Article.prototype.updateRecord = function(callback) {
   $.ajax({
-    url: '/articles/delete',
-    method: 'DELETE',
+    url: '/articles/update',
+    method: 'PUT',
     data: {
       author: this.author,
       authorUrl: this.authorUrl,
