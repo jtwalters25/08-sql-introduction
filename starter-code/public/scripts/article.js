@@ -49,11 +49,11 @@ Article.fetchAll = function(callback) {
           method: 'GET',
           success:function(item){
             data.forEach(item)
-            var article = new Article(item);
-            insertRecord(item);
+            let article = new Article(item);
+            article.insertRecord();
           })
             .then(
-              fetchAll(callback)
+              Article.fetchAll(callback)
             .catch(function(err) {
               console.log(err);
             });

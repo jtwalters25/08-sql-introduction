@@ -2,6 +2,7 @@
 // DONE: Install and require the node postgres package into your server.js, and ensure that it's now a new dependency in your package.json
 const pg = require('pg');
 const express = require('express');
+const SQL = require('sql-template-strings');
 // REVIEW: Require in body-parser for post requests in our server
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
@@ -15,7 +16,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('./public'));
 
 
-// NOTE: Routes for requesting HTML resources
+// NOTE: Routes for requesting HTML resources #2,#3 in diagram HTTP protocol
 app.get('/', function(request, response) {
   response.sendFile('index.html', {root: '.'});
 });
@@ -32,9 +33,10 @@ app.get('/articles/all', function(request, response) {
 
   client.connect(function(err) { // Use the client object to connect to our DB.
     if (err) console.error(err);
+    //#3 in diagram sql protocol QUERY
     client.query('SELECT * FROM articles', function(err, result) { // Make a request to the DB
-      if (err) console.error(err);
-      response.send(result);
+      if (err) console.error(err);//#4 in diagram sql protocol RESULT
+      response.send(result); //#5 in diagram RESPONSE HTTP Protocol
       client.end();
     });
   })
@@ -47,7 +49,7 @@ app.post('/articles/insert', function(request, response) {
   client.connect(function(err) {
     if (err) console.error(err);
     client.query(
-      `INSERT INTO articles(author, authorURL, body, category, publishedOn, title, id)
+      `INSERT INTO articles(author, "authorURL", body, category, "publishedOn", title, id)
      VALUES($1, $2, $3, $4, $5, $6);`
      // DONE: Write the SQL query to insert a new record
      [request.body.author,
@@ -55,8 +57,7 @@ app.post('/articles/insert', function(request, response) {
       request.body.body,
       request.body.category,
       request.body.publishedOn,
-      request.body.title,
-      request.body.id], // DONE: Get each value from the request's body
+      request.body.title], // DONE: Get each value from the request's body
      function(err) {
        if (err) console.error(err);
        client.end();
@@ -99,8 +100,7 @@ app.delete('/articles/delete', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      `DELETE FROM articles
-      WHERE id =${[request.body.id]}`, // did: Write the SQL query to delete a record
+      `DELETE FROM articles WHERE id=${request.body.id};`, // did: Write the SQL query to delete a record
       function(err) {
         if (err) console.error(err);
         client.end();
@@ -117,7 +117,7 @@ app.delete('/articles/truncate', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      'TRUNCATE TABLE articles', // did: Write the SQl query to truncate the table
+      'DELETE FROM articles;', // did: Write the SQl query to truncate the table
       function(err) {
         if (err) console.error(err);
         client.end();
