@@ -56,7 +56,8 @@ app.post('/articles/insert', function(request, response) {
       request.body.body,
       request.body.category,
       request.body.publishedOn,
-      request.body.title], // DONE: Get each value from the request's body
+      request.body.title,
+      request.body.id], // DONE: Get each value from the request's body
      function(err) {
        if (err) console.error(err);
        client.end();
@@ -116,7 +117,7 @@ app.delete('/articles/truncate', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      'DELETE FROM articles;', // did: Write the SQl query to truncate the table
+      'TRUNCATE TABLE articles;', // did: Write the SQl query to truncate the table
       function(err) {
         if (err) console.error(err);
         client.end();

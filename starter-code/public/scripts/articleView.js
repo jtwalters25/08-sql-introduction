@@ -77,26 +77,26 @@ articleView.initNewArticlePage = function() {
 };
 
 articleView.create = function() {
-  let article;
+  var newArticleData;
   $('#articles').empty();
 
-  let article = new Article({
+  newArticleData = {
     title: $('#article-title').val(),
     author: $('#article-author').val(),
     authorUrl: $('#article-author-url').val(),
     category: $('#article-category').val(),
     body: $('#article-body').val(),
     publishedOn: $('#article-published:checked').length ? new Date() : null
-  });
+  };
 
-  $('#articles').append(article.toHtml());
+  $('#articles').append(newArticleData.toHtml());
 
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
   });
 
   $('#export-field').show();
-  $('#article-json').val(`${JSON.stringify(article)},`);
+  $('#article-json').val(`${JSON.stringify(newArticleData)},`);
 };
 
 articleView.initIndexPage = function() {

@@ -40,19 +40,20 @@ Article.fetchAll = function(callback) {
   .then(
     function(results) {
       if (results.rows.length) {
+
         Article.loadAll(results.rows);
         callback();// If records exist in the DB
         // did: Call loadAll, and pass in the results, then invoke the callback.
       } else { // if NO records exist in the DB
         $.getJSON('data/hackerIpsum.json')
-        .then(function(results) {
-          results.forEach(function(article) {
-            let article = new Article(item);
-            article.insertRecord();
+        .then(function(data) {
+          data.forEach(function(item) {
+            let art = new Article(item);
+            art.insertRecord();
           })
         })
         .then(function(){
-          Article.fetchAll(callback)
+          // Article.fetchAll(callback)
         })
         .catch(function(err) {
           console.log(err);
@@ -61,58 +62,58 @@ Article.fetchAll = function(callback) {
         // did: Make an ajax call to get the json
         // THEN() iterate over the results, and create a new Article object for each.
         // When that's complete call the insertRecord method for each article you've created.
-        // THEN() invoke fetchAll and pass your callback as an argument
-        // Don't forget to CATCH() any errors
-
-
+      }        // THEN() invoke fetchAll and pass your callback as an argument
+    }        // Don't forget to CATCH() any errors
+)
+};
         // REVIEW: Lets take a few minutes and review what each of these new methods do in relation to our server and DB
-        Article.truncateTable = function(callback) {
-          $.ajax({
-            url: '/articles/truncate',
-            method: 'DELETE',
-          })
+Article.truncateTable = function(callback) {
+  $.ajax({
+    url: '/articles/truncate',
+    method: 'DELETE',
+  })
           .then(function(data) {
             console.log(data);
             if (callback) callback();
           });
-        };
+};
 
-        Article.prototype.insertRecord = function(callback) {
-          $.post('/articles/insert', {author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title})
+Article.prototype.insertRecord = function(callback) {
+  $.post('/articles/insert', {author: this.author, authorUrl: this.authorUrl, body: this.body, category: this.category, publishedOn: this.publishedOn, title: this.title})
           .then(function(data) {
             console.log(data);
             if (callback) callback();
           })
-        };
+};
 
-        Article.prototype.deleteRecord = function(callback) {
-          $.ajax({
-            url: '/articles/delete',
-            method: 'DELETE',
-            data: {id: this.id}
-          })
-          .then(function(data) {
-            console.log(data);
-            if (callback) callback();
-          });
-        };
-
-        Article.prototype.updateRecord = function(callback) {
-          $.ajax({
-            url: '/articles/update',
-            method: 'PUT',
-            data: {
-              author: this.author,
-              authorUrl: this.authorUrl,
-              body: this.body,
-              category: this.category,
-              publishedOn: this.publishedOn,
-              title: this.title,
-              id: this.id
-            }
-          })
+Article.prototype.deleteRecord = function(callback) {
+  $.ajax({
+    url: '/articles/delete',
+    method: 'DELETE',
+    data: {id: this.id}
+  })
           .then(function(data) {
             console.log(data);
             if (callback) callback();
           });
-        };
+};
+
+Article.prototype.updateRecord = function(callback) {
+  $.ajax({
+    url: '/articles/update',
+    method: 'PUT',
+    data: {
+      author: this.author,
+      authorUrl: this.authorUrl,
+      body: this.body,
+      category: this.category,
+      publishedOn: this.publishedOn,
+      title: this.title,
+      id: this.id
+    }
+  })
+          .then(function(data) {
+            console.log(data);
+            if (callback) callback();
+          });
+};
