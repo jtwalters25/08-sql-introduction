@@ -2,7 +2,6 @@
 // DONE: Install and require the node postgres package into your server.js, and ensure that it's now a new dependency in your package.json
 const pg = require('pg');
 const express = require('express');
-const SQL = require('sql-template-strings');
 // REVIEW: Require in body-parser for post requests in our server
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
@@ -49,7 +48,7 @@ app.post('/articles/insert', function(request, response) {
   client.connect(function(err) {
     if (err) console.error(err);
     client.query(
-      `INSERT INTO articles(author, "authorURL", body, category, "publishedOn", title, id)
+      `INSERT INTO articles(author, "authorURL", body, category, "publishedOn", title)
      VALUES($1, $2, $3, $4, $5, $6);`
      // DONE: Write the SQL query to insert a new record
      [request.body.author,
@@ -75,7 +74,7 @@ app.put('/articles/update', function(request, response) {
 
     client.query(
       `UPDATE articles
-      SET author=$1, "authorURL"=$2, body=$3, category=$4, "publishedOn"=$5, title=$6, WHERE id=$7`
+      SET author=$1, "authorURL"=$2, body=$3, category=$4, "publishedOn"=$5, title=$6, WHERE id=$7;`,
 
       [request.body.author,
        request.body.authorURL,
@@ -100,7 +99,7 @@ app.delete('/articles/delete', function(request, response) {
     if (err) console.error(err);
 
     client.query(
-      `DELETE FROM articles WHERE id=${request.body.id};`, // did: Write the SQL query to delete a record
+      `DELETE FROM articles WHERE id=${request.body.id}`, // did: Write the SQL query to delete a record
       function(err) {
         if (err) console.error(err);
         client.end();
